@@ -1,0 +1,59 @@
+/* Adjust the styles as needed */
+/* Styles for the app container */
+.app-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 600vh;
+  background-color: #f0f0f0;
+}
+
+/* Styles for the sidebar */
+/* Styles for the sidebar content */
+/* Styles for the sidebar content */
+.sidebar-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Style for individual information item */
+.sidebar-content p {
+  margin-right: 20px;
+}
+
+
+
+/* Styles for the map container */
+.map-container {
+  flex: 2;
+  height: 100%;
+  border-left: 1px solid #ddd;
+}
+
+
+/* You can keep the rest of the styles unchanged */
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
