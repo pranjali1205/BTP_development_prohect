@@ -9,6 +9,20 @@
   background-color: #f0f0f0;
 }
 
+.form-control{
+  background-color: darkred;
+}
+.coordinates-control {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
 /* Styles for the sidebar */
 /* Styles for the sidebar content */
 /* Styles for the sidebar content */
