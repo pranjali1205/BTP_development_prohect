@@ -1,0 +1,58 @@
+{
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Simple Bus Route",
+        "description": "A simplified bus route in India"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            77.209,
+            28.6139
+          ],
+          [
+            82.9739,
+            25.3176
+          ],
+          [
+            83.037463,
+            25.277874
+          ],
+          [
+            83.003549,
+            25.317365
+          ],
+          [
+            85.1376,
+            25.5941
+          ],
+          [
+            86.714701,
+            23.705527
+          ],
+          [
+            84.27,
+            20.2376
+          ],
+          [
+            79.0882,
+            21.1458
+          ],
+          [
+            79.2537,
+            17.3873
+          ],
+          [
+            79.4192,
+            13.6288
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "18afacee213a0406b84bee49528ffb21"
+    }
+  ],
+  "type": "FeatureCollection"
+}

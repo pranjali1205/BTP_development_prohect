@@ -5,7 +5,7 @@ const app = express();
 // const pinRoute = require("./routes/pins")
 // const useRoute = require("./routes/users")
 // const DataSchema = require("./routes/datas")
-const Trip = require("./rules/trip")
+const Trip1 = require("./rules/trip1")
 
 dotenv.config();
 
@@ -21,9 +21,9 @@ mongoose
       .then(() => {
       	console.log("MongoDb Connected successfully!");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log("Not connected"));
 
-app.use("/api/trip",Trip);
+app.use("/api/trip1",Trip1);
 // app.use("/api/users",useRoute);     
 // app.use("/api/pins",pinRoute);
 // app.use("/api/datas",DataSchema);

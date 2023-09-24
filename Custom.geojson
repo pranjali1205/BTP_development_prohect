@@ -1,0 +1,87 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "New Delhi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.2090, 28.6139]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mumbai"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [72.8777, 19.0760]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bangalore"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.5946, 12.9716]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Chennai"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [80.2707, 13.0827]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "color": "#FF0000",
+        "route_name": "New Delhi to Mumbai"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [77.2090, 28.6139],
+          [72.8777, 19.0760]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "color": "#00FF00", // Green
+        "route_name": "Mumbai to Bangalore"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [72.8777, 19.0760],
+          [77.5946, 12.9716]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "color": "#0000FF", // Blue
+        "route_name": "Bangalore to Chennai"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [77.5946, 12.9716],
+          [80.2707, 13.0827]
+        ]
+      }
+    }
+  ]
+}

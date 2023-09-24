@@ -1,78 +1,88 @@
-import React, { useRef, useEffect, useState } from 'react';
-import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import React, { useRef, useEffect } from 'react';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from './Sidebar';
-
-
-mapboxgl.accessToken = 'pk.eyJ1IjoiZGVlcGFrODM1MCIsImEiOiJjbGxqZ3cycWowdXFuM2RsaWMzMnh2cjZpIn0.2SHBdM7eqkRzxVw4x3gyag';
+import * as ELG from 'esri-leaflet-geocoder';
 
 function App() {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const [lng, setLng] = useState(79.4192);
-  const [lat, setLat] = useState(13.6288);
-  const [zoom, setZoom] = useState(5);
-
 
   useEffect(() => {
-    if (map.current) return; // initialize map only once
-    map.current = new mapboxgl.Map({
+    if (!map.current) {
+      map.current = L.map(mapContainer.current).setView([13.6288, 79.4192], 5);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        subdomains: ['a', 'b', 'c'],
+      }).addTo(map.current);
 
-      container: mapContainer.current,
-      style: 'mapbox://styles/deepak8350/clljjcfuh019o01p88w2uc6q6',
+      const customIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        iconSize: [25, 41], // Default size for Leaflet markers
+        iconAnchor: [12, 41], // Half of the icon's size for correct placement
+      });
 
-      center: [lng, lat],
-      zoom: zoom
-    });
+      L.marker([13.6290, 79.4259], { icon: customIcon }).addTo(map.current);
 
-    map.current.on('move', () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
-      setZoom(map.current.getZoom().toFixed(3));
-    });
+      const coordinatesControl = L.control();
+      coordinatesControl.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'coordinates-control');
+        this.update();
+        return this._div;
+      };
+      coordinatesControl.update = function (latlng) {
+        this._div.innerHTML = latlng ? `Latitude: ${latlng.lat.toFixed(4)}<br>Longitude: ${latlng.lng.toFixed(4)}` : '';
+      };
+      coordinatesControl.addTo(map.current);
 
+      map.current.on('mousemove', (e) => {
+        coordinatesControl.update(e.latlng);
+      });
+    }
+  }, []);
 
-    new mapboxgl.Marker()
-      .setLngLat([78.1305, 17.2631])
-      .addTo(map.current);
-
-
-  }, [lat, lng, zoom]);
-
-  
   const handleSearchChange = (newSearchText) => {
-    // Handle the search text change here
+    const geocoder = ELG.geocodeService();
+
+    geocoder.geocode().text(newSearchText).run((error, response) => {
+      if (error) {
+        console.error('Geocoding error:', error);
+        return;
+      }
+
+      const results = response.results;
+      if (results && results.length > 0) {
+        const [newLat, newLng] = results[0].latlng;
+        map.current.setView([newLat, newLng]);
+      }
+    });
+
     console.log('Search text changed:', newSearchText);
-    // You can update the map or perform other actions based on the search text
+  };
+
+  const handleSourceChange = (newSource) => {
+    console.log('Source changed:', newSource);
+  };
+
+  const handleDestinationChange = (newDestination) => {
+    console.log('Destination changed:', newDestination);
   };
 
   return (
-          <div class="app-container">
-            <div class="row align-items-start">
-            <Sidebar onSearchChange={handleSearchChange} />
-              <div className="col-9">
-              <div class="row gx-3">
-
-                  <div class="col">
-                    <div class="p-4 border bg-light">Longitude: {lng}</div>                        
-                  </div>
-
-                  <div class="col">
-                    <div class="p-4 border bg-light">Latitude: {lat}</div>
-                  </div>
-
-                  <div class="col">
-                     <div class="p-4 border bg-light">Zoom: {zoom}</div>                       
-                  </div>
-                  </div>
-            
-            <div ref={mapContainer} className="map-container" style={{ width: '100%', height: '90vh' }} />
-            </div> 
-            </div>
-            
-          </div>
+    <div className="app-container">
+      <div className="row align-items-start">
+        <Sidebar
+          onSearchChange={handleSearchChange}
+          onSourceChange={handleSourceChange}
+          onDestinationChange={handleDestinationChange}
+        />
+        <div className="col-9">
+          <div ref={mapContainer} className="map-container" style={{ width: '100%', height: '90vh' }} />
+        </div>
+      </div>
+    </div>
   );
 }
-
 
 export default App;

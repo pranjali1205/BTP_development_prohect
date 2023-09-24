@@ -1,0 +1,51 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tirupati bus route",
+        "description": "A simplified bus route"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [79.44358, 13.61084],
+          [79.43908, 13.61278],
+          [79.43276, 13.61898],
+          [79.43109, 13.6262],
+          [79.427725, 13.62092],
+          [79.42117, 13.62863],
+          [79.4259, 13.63002],
+          [79.4371, 13.61338],
+          [79.39866, 13.6121]
+        ]
+      },
+      "id": "18afacee213a0406b84bee49528ffb21",
+      "style": {
+        "color": "red",
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tirupati BusStand",
+        "description": "Points of interest in Tirupati"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [79.4259, 13.6290]
+        ]
+      },
+      "id": "1b5d6c8f6a2e4c0db5c6f2272f3a4ae2",
+      "style": {
+        "fillColor": "blue",
+        "color": "green",
+        "radius": 10,
+        "weight": 2
+      }
+    }
+  ]
+}

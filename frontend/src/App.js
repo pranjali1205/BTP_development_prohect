@@ -1,114 +1,255 @@
-import React, { useRef, useEffect } from 'react';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import React, { useRef, useEffect, useState } from 'react';
+import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Sidebar from './Sidebar';
-//import 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css';
-import * as ELG from 'esri-leaflet-geocoder';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
+mapboxgl.accessToken = 'pk.eyJ1IjoiZGVlcGFrODM1MCIsImEiOiJjbGxqZ3cycWowdXFuM2RsaWMzMnh2cjZpIn0.2SHBdM7eqkRzxVw4x3gyag';
 
 function App() {
   const mapContainer = useRef(null);
   const map = useRef(null);
+  const [lng, setLng] = useState(78.4867);
+  const [lat, setLat] = useState(17.3850);
+  const [zoom, setZoom] = useState(7);
 
   useEffect(() => {
-
     if (map.current) return;
 
-    map.current = L.map(mapContainer.current).setView([13.6288, 79.4192], 5);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 20,
-      subdomains: ['a', 'b', 'c'],
-    }).addTo(map.current);
-
-    const LeafIcon = L.Icon.extend({
-      options: {
-        iconSize: [25, 30],
-        
-      },
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [lng, lat],
+      zoom: zoom
     });
 
-    const customIcon = new LeafIcon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png' });
+    map.current.on('load', () => {
+      const source = {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: []
+        }
+      };
 
-    // Example marker with custom icon
-    L.marker([13.6290, 79.4259], { icon: customIcon }).addTo(map.current);
+      const layer = {
+        id: 'route',
+        type: 'line',
+        source: 'route',
+        paint: {
+          'line-color': 'red',
+          'line-opacity': 0.7,
+          'line-width': 2
+        }
+      };
 
-//     L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-//   maxZoom: 20,
-//   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-// }).addTo(map.current);
+      const locationIconStart = {
+        id: 'location-start',
+        type: 'symbol',
+        source: 'route',
+        layout: {
+          'icon-image': 'location-icon',
+          'icon-allow-overlap': true,
+          'icon-size': 1
+        },
+        paint: {}
+      };
 
+      const locationIconEnd = {
+        id: 'location-end',
+        type: 'symbol',
+        source: 'route',
+        layout: {
+          'icon-image': 'location-icon',
+          'icon-allow-overlap': true,
+          'icon-size': 1
+        },
+        paint: {}
+      };
 
-//     L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZGVlcGFrODM1MCIsImEiOiJjbGxqZ3cycWowdXFuM2RsaWMzMnh2cjZpIn0.2SHBdM7eqkRzxVw4x3gyag', {
-//   tileSize: 512,
-//   zoomOffset: -1,
-//   accessToken: 'pk.eyJ1IjoiZGVlcGFrODM1MCIsImEiOiJjbGxqZ3cycWowdXFuM2RsaWMzMnh2cjZpIn0.2SHBdM7eqkRzxVw4x3gyag'
-// }).addTo(map.current);
+      const dropIcon = {
+        id: 'location-drop',
+        type: 'symbol',
+        source: 'route',
+        layout: {
+          'icon-image': 'drop-icon',
+          'icon-allow-overlap': true,
+          'icon-size': 1
+        },
+        paint: {
+          'icon-color': 'red' // Set the color of the destination drop symbol to red
+        }
+      };
 
+      map.current.loadImage(
+        'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+        (error, image) => {
+          if (error) throw error;
+          map.current.addImage('location-icon', image);
+          
+          // Add Hyderabad marker
+          map.current.addSource('hyderabad', {
+            type: 'geojson',
+            data: {
+              type: 'FeatureCollection',
+              features: [
+                {
+                  type: 'Feature',
+                  geometry: {
+                    type: 'Point',
+                    coordinates: [78.4867, 17.3850]
+                  },
+                  properties: {
+                    'marker-color': 'blue',
+                    'marker-symbol': 'marker'
+                  }
+                }
+              ]
+            }
+          });
 
+          map.current.addLayer({
+            id: 'hyderabad',
+            type: 'symbol',
+            source: 'hyderabad',
+            layout: {
+              'icon-image': 'location-icon',
+              'icon-allow-overlap': true,
+              'icon-size': 1
+            },
+            paint: {}
+          });
 
-    // Add a custom control to show coordinates
-    const coordinatesControl = L.control();
-    coordinatesControl.onAdd = function (map) {
-      this._div = L.DomUtil.create('div', 'coordinates-control');
-      this.update();
-      return this._div;
-    };
-    coordinatesControl.update = function (latlng) {
-      this._div.innerHTML = latlng ? `Latitude: ${latlng.lat.toFixed(4)}<br>Longitude: ${latlng.lng.toFixed(4)}` : '';
-    };
-    coordinatesControl.addTo(map.current);
+          // Add Bangalore marker
+          map.current.addSource('bangalore', {
+            type: 'geojson',
+            data: {
+              type: 'FeatureCollection',
+              features: [
+                {
+                  type: 'Feature',
+                  geometry: {
+                    type: 'Point',
+                    coordinates: [77.5946, 12.9716]
+                  },
+                  properties: {
+                    'marker-color': 'red',
+                    'marker-symbol': 'marker'
+                  }
+                }
+              ]
+            }
+          });
 
-    map.current.on('mousemove', (e) => {
-      coordinatesControl.update(e.latlng);
+          map.current.addLayer({
+            id: 'bangalore',
+            type: 'symbol',
+            source: 'bangalore',
+            layout: {
+              'icon-image': 'location-icon',
+              'icon-allow-overlap': true,
+              'icon-size': 1
+            },
+            paint: {}
+          });
+
+          map.current.addSource('route', source);
+          map.current.addLayer(layer);
+          map.current.addLayer(locationIconStart);
+          map.current.addLayer(locationIconEnd);
+          map.current.addLayer(dropIcon);
+
+          const directionsAPI = `https://api.mapbox.com/directions/v5/mapbox/driving/${lng},${lat};77.5946,12.9716?alternatives=false&geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+          fetch(directionsAPI)
+            .then(response => response.json())
+            .then(data => {
+              const route = data.routes[0].geometry;
+              map.current.getSource('route').setData(route);
+
+              const start = data.waypoints[0].location;
+              const end = data.waypoints[1].location;
+
+              map.current.flyTo({
+                center: start,
+                zoom: zoom
+              });
+
+              map.current.addSource('location-start', {
+                type: 'geojson',
+                data: {
+                  type: 'FeatureCollection',
+                  features: [
+                    {
+                      type: 'Feature',
+                      geometry: {
+                        type: 'Point',
+                        coordinates: start
+                      }
+                    }
+                  ]
+                }
+              });
+
+              map.current.addSource('location-end', {
+                type: 'geojson',
+                data: {
+                  type: 'FeatureCollection',
+                  features: [
+                    {
+                      type: 'Feature',
+                      geometry: {
+                        type: 'Point',
+                        coordinates: end
+                      }
+                    }
+                  ]
+                }
+              });
+
+              map.current.addSource('location-drop', {
+                type: 'geojson',
+                data: {
+                  type: 'FeatureCollection',
+                  features: [
+                    {
+                      type: 'Feature',
+                      geometry: {
+                        type: 'Point',
+                        coordinates: end
+                      }
+                    }
+                  ]
+                }
+              });
+            })
+            .catch(error => {
+              console.log('Error: ', error);
+            });
+        }
+      );
     });
-  }, []);
-
-  const handleSearchChange = (newSearchText) => {
-    // Update the map's center based on search text
-    const geocoder = ELG.geocodeService();
-
-    geocoder.geocode().text(newSearchText).run((error, response) => {
-      if (error) {
-        console.error('Geocoding error:', error);
-        return;
-      }
-
-      const results = response.results;
-      if (results && results.length > 0) {
-        const [newLat, newLng] = results[0].latlng;
-        map.current.setView([newLat, newLng]);
-      }
-    });
-
-    console.log('Search text changed:', newSearchText);
-  };
-
-  const handleSourceChange = (newSource) => {
-    // Handle source change logic here
-    console.log('Source changed:', newSource);
-    // You can update the map or perform other actions based on the source change
-  };
-
-  const handleDestinationChange = (newDestination) => {
-    // Handle destination change logic here
-    console.log('Destination changed:', newDestination);
-    // You can update the map or perform other actions based on the destination change
-  };
+  }, [lat, lng, zoom]);
 
   return (
     <div className="app-container">
       <div className="row align-items-start">
-        <Sidebar
-          onSearchChange={handleSearchChange}
-          onSourceChange={handleSourceChange}
-          onDestinationChange={handleDestinationChange}
-        />
-        <div className="col-9">
-          <div ref={mapContainer} className="map-container" style={{ width: '100%', height: '90vh' }} />
+        <div className="row gx-3">
+          <div className="col">
+            <div className="p-4 border bg-light">Longitude: {lng}</div>
+          </div>
+          <div className="col">
+            <div className="p-4 border bg-light">Latitude: {lat}</div>
+          </div>
+          <div className="col">
+            <div className="p-4 border bg-light">Zoom: {zoom}</div>
+          </div>
         </div>
       </div>
+      <div
+        ref={mapContainer}
+        className="map-container"
+        style={{ width: '100%', height: '90vh' }}
+      />
     </div>
   );
 }
