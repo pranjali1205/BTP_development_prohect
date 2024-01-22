@@ -1,0 +1,22 @@
+{
+  "storeId": "XYZ987",
+  "address": "1234 Elm Street, Springfield, USA",
+  "location": {
+    "type": "Point",
+    "coordinates": [-122.084143, 37.422065], // Example longitude and latitude
+    "formattedAddress": "1234 Elm Street, Springfield, USA"
+  }
+}
+
+
+{
+  "storeId": "26",
+  "address": "Chhatishgarh",
+  "location": {
+    "type": "Point",
+    "coordinates": [52.0841, 37.4065], // Example longitude and latitude
+    "formattedAddress": "Chhatishgarh, USA"
+  },
+  "start_time":"12:35",
+  "end_time":"12:50"
+}
